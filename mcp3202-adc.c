@@ -1,5 +1,5 @@
 /*
- * spi_adc_demo.c
+ * mcp3202-adc.c
  * This file is part of spi_adc_demo
  *
  * Copyright (C) 2014 - BhuvanChandra.DV
@@ -71,7 +71,7 @@ int main(int argc, char **argv){
 	spiData *data = malloc(sizeof(spiData));
 
 	if(argc < 3){
-		printf("Useage: %s <adc_channel> <spi_dev_name> e.g: mcp3202 0 /dev/spidev1.0\n", argv[0]);
+		printf("Useage: %s <adc_channel> <spi_dev_name>\ne.g: mcp3202 0 /dev/spidev1.0\n", argv[0]);
 		exit(-1);
 	}
 	
