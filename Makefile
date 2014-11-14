@@ -14,8 +14,8 @@
 ##############################################################################
 
 # Set the input source files, the binary name and used libraries to link
-SRCS = adc_demo.c getcontents.c
-PROG := adc_demo
+SRCS = spi-dev-lib.o mcp3202-adc.o
+PROG := mcp3202
 LIBS = -lm
 
 # Set arch flags
