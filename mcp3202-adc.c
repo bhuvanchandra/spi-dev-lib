@@ -27,20 +27,16 @@
 #include "spi-dev-lib.h"
 #include "mcp3202-adc.h"
 
-/* #define DEBUG */
-
 /******************************************************************************/
 int readAdc(spiData *data){
-	uint8_t tx[] = {0};
-	uint8_t rx[ARRAY_SIZE(tx)] = {0};
 	unsigned int reData = 0;           
 
 	data->tx[0] = START_BIT;
-	if(data->channelNo < 0 || data->channelNo > 1){
+	if(data->privData[0] < 0 || data->privData[0] > 1){
 		printf("MCP3202 had two channels, CHN0, CHN1\n");
 		return -1;
 	}
-	switch(data->channelNo){
+	switch(data->privData[0]){
 		case 0:
 			data->tx[1] = ADC_CONFIG_SGL_MODE_MSBF_CN0;
 		break;
@@ -58,9 +54,9 @@ int readAdc(spiData *data){
 	spiTransfer(data);
 
 	printf("The analog input value is \n");
-	reData = (((data->rx[1] << 8) + data->rx[2]) & MSBF_MASK);
+	reData = (((data->rx[1] << 8) + data->rx[2]) & BIT_MASK);
 	
-	printf("Value at MCP3202 CH%d is: %d D : %X H \n", data->channelNo, reData, reData);
+	printf("Value at MCP3202 CH%d is: %d D : %X H \n", data->privData[0], reData, reData);
 	
 	return 0;
 }
@@ -81,7 +77,7 @@ int main(int argc, char **argv){
 	data->delay = 0;
 	sprintf(data->device, "%s", argv[2]);
 
-	data->channelNo = atoi(argv[1]);
+	data->privData[0] = atoi(argv[1]);	/* ADC Channel No. */
 
 	if(spiInit(data)){
 		perror("SPI Init failed");
@@ -98,7 +94,3 @@ int main(int argc, char **argv){
 
 	return retVal;               
 }
-
- 	
-
-

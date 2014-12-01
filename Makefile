@@ -14,8 +14,10 @@
 ##############################################################################
 
 # Set the input source files, the binary name and used libraries to link
-SRCS = spi-dev-lib.o mcp3202-adc.o
-PROG := mcp3202
+SRCS_ADC = spi-dev-lib.o mcp3202-adc.o
+SRCS_DAC = spi-dev-lib.o mcp4921-dac.o
+PROG_ADC := mcp3202
+PROG_DAC := mcp4921
 LIBS = -lm
 
 # Set arch flags
@@ -80,26 +82,32 @@ STRIP = $(CROSS_COMPILE)strip
 RM = rm -f
 
 # Sets the output filename and object files
-PROG := $(PROG)$(BIN_POSTFIX)
-OBJS = $(SRCS:.c=$(BIN_POSTFIX).o)
-DEPS = $(OBJS:.o=.o.d)
+PROG_ADC := $(PROG_ADC)$(BIN_POSTFIX)
+PROG_DAC := $(PROG_DAC)$(BIN_POSTFIX)
+OBJS_ADC = $(SRCS_ADC:.c=$(BIN_POSTFIX).o)
+OBJS_DAC = $(SRCS_DAC:.c=$(BIN_POSTFIX).o)
+DEPS = $(OBJS_ADC:.o=.o.d) $(OBJS_DAC:.o=.o.d)
 
 # pull in dependency info for *existing* .o files
 -include $(DEPS)
 
 .DEFAULT_GOAL := all
 
-all: $(PROG)
+all: $(PROG_ADC) $(PROG_DAC)
 
-$(PROG): $(OBJS) Makefile
-	$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(LDFLAGS) -o $@
-	$(STRIP) $@ 
+$(PROG_ADC): $(OBJS_ADC) Makefile
+	$(CC) $(CFLAGS) $(OBJS_ADC) $(LIBS) $(LDFLAGS) -o $@
+	$(STRIP) $@
+
+$(PROG_DAC): $(OBJS_DAC) Makefile
+	$(CC) $(CFLAGS) $(OBJS_DAC) $(LIBS) $(LDFLAGS) -o $@
+	$(STRIP) $@
 
 %$(BIN_POSTFIX).o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 	$(CC) -MM $(CFLAGS) $< > $@.d
 
 clean:
-	$(RM) $(OBJS) $(PROG) $(DEPS)
+	$(RM) $(OBJS_ADC) $(OBJS_DAC) $(PROG_ADC) $(PROG_DAC) $(DEPS)
 
 .PHONY: all clean
